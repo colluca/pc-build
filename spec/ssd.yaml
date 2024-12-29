@@ -3,9 +3,10 @@ features:
   - price
   - manufacturer
   - name
-  - size
-  - total capacity
-  - cache
-  - reading speed (SSD)
-  - writing speed (SSD)
+  - general information:
+    - size
+    - total capacity
+    - cache
+    - reading speed (SSD)
+    - writing speed (SSD)
   - link

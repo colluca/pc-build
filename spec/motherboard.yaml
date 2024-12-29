@@ -3,27 +3,35 @@ features:
   - price
   - manufacturer
   - name
-  - chipset
-  - socket
-  - number of CPUs
-  - type
-  - maximum frequency
-  - number of slots
-  - PCIe 16x generation
-  - PCIe x16
-  - PCIe x8
-  - PCIe x4
-  - PCIe x1
-  - SATA 6Gb/s
-  - M.2
-  - max. speed (LAN)
-  - Bluetooth
-  - USB 2.0
-  - USB 3.0 (USB 3.2 Gen 1)
-  - USB 3.1 (USB 3.2 Gen 2)
-  - USB-C 3.1 (USB 3.2 Gen 2)
-  - USB-C 3.2 (USB 3.2 Gen 2x2)
-  - USB-C 4.0
-  - format
-  - color
+  - general information:
+    - chipset
+    - socket
+    - number of CPUs
+  - memory:
+    - type
+    - maximum frequency
+    - number of slots
+  - expansion slots:
+    - PCIe 16x generation
+    - PCIe x16
+    - PCIe x8
+    - PCIe x4
+    - PCIe x1
+  - SATA:
+    - SATA 6Gb/s
+    - M.2
+  - network:
+    - max. speed (LAN)
+    - Bluetooth
+  - external interfaces:
+    - USB 2.0
+    - USB 3.0 (USB 3.2 Gen 1)
+    - USB 3.1 (USB 3.2 Gen 2)
+    - USB-C 3.1 (USB 3.2 Gen 2)
+    - USB-C 3.2 (USB 3.2 Gen 2x2)
+    - USB-C 4.0
+  - dimensions:
+    - format
+  - other:
+    - color
   - link

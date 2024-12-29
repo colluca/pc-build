@@ -3,7 +3,9 @@ features:
   - price
   - manufacturer
   - name
-  - total capacity
-  - rotations
-  - Serial ATA
+  - general information:
+    - total capacity
+    - rotations
+  - connectors:
+    - Serial ATA
   - link

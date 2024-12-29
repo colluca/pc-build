@@ -3,12 +3,15 @@ features:
   - price
   - manufacturer
   - name
-  - power
-  - form factor
-  - color
-  - PCI-Express
-  - SATA
-  - motherboard
-  - efficiency
-  - max noise level
+  - general information:
+    - power
+    - form factor
+    - color
+  - connectors:
+    - PCI-Express
+    - SATA
+    - motherboard
+  - other:
+    - efficiency
+    - max noise level
   - link

@@ -3,10 +3,11 @@ features:
   - price
   - manufacturer
   - name
-  - CPU cores
-  - clock rate
-  - max. turbo frequency
-  - L3 cache
-  - L2 cache
-  - manufacturing process
+  - general information:
+    - CPU cores
+    - clock rate
+    - max. turbo frequency
+    - L3 cache
+    - L2 cache
+    - manufacturing process
   - link

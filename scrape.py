@@ -8,9 +8,9 @@ DATA_DIR = Path('data')
 
 def main():
     for spec in SPECS_DIR.iterdir():
-        if spec.stem in ['fan']:
+        if spec.stem:
             scraper = Scraper.from_yaml(spec)
-            scraper.scrape(max_products=2)
+            scraper.scrape()
             scraper.to_csv(DATA_DIR / f'{spec.stem}.csv')
 
 

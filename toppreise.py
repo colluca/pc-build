@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import argparse
 from bs4 import BeautifulSoup
-from math import ceil
 import pandas as pd
 from playwright.sync_api import sync_playwright
 import re
@@ -51,40 +50,60 @@ def get_product_features(product_url, filter=None):
         try:
             # Parse product page HTML
             soup = BeautifulSoup(html, "html.parser")
-            
-            # Get generic product information (price, manufacturer, name)
+
+            # Get generic product features (price, manufacturer, name)
             price = float(soup.find('div', class_="Plugin_Price").text.strip().replace("'", ""))
             manufacturer = soup.find('span', class_="manu").text.strip()
             title = soup.find('span', class_="title break")
             if title is None:
                 title = soup.find('span', class_="title")
             name = title.text.strip().split(',')[0]
+            features = {
+                'manufacturer': manufacturer,
+                'name': name,
+                'price': price,
+                'link': product_url
+            }
 
-            # Get specific product features
-            feature_nodes = soup.find_all(id=re.compile(r"^Plugin_ProductNgfFeature_.*"))
-            features = {'manufacturer': manufacturer, 'name': name, 'price': price}
+            # Get product feature categories
+            category_nodes = soup.find_all(id=re.compile(r"^Plugin_ProductNgfFeatureCategory_.*"))
 
-            # Iterate requested features
-            for feature_node in feature_nodes:
-                key = feature_node.find('div', class_='name').text.strip()
-                value = feature_node.find('div', class_='value').text.strip()
-                print(f'{key}: {value}')
+            # Iterate feature categories
+            for category_node in category_nodes:
+                category_name = category_node.find('div', class_='featureCatName').text.strip()
+                features[category_name] = {}
 
-                # Only add feature if not previously added
-                # TODO: support multiple features with the same name but under different groups, e.g.
-                # "chipset" in motherboards, which can refer to both CPU and audio chipsets
-                if key not in features:
-                    features[key] = value
-            features['link'] = product_url
+                # Get features in category
+                feature_nodes = category_node.find_all(id=re.compile(r"^Plugin_ProductNgfFeature_.*"))
+
+                # Iterate features in category
+                for feature_node in feature_nodes:
+                    key = feature_node.find('div', class_='name').text.strip()
+                    value = feature_node.find('div', class_='value').text.strip()
+                    features[category_name][key] = value
+
+            # Filter features if requested
             if filter is not None:
+                filtered_features = {}
                 try:
-                    features = {key: features[key] for key in filter}
+                    # Iterate entries in filter structure
+                    for entry in filter:
+                        # If entry is a category, feature is found in subkeys
+                        if isinstance(entry, dict):
+                            category = list(entry.keys())[0]
+                            for feature in list(entry.values())[0]:
+                                filtered_features[feature] = features[category][feature]
+                        else:
+                            filtered_features[entry] = features[entry]
+                    return filtered_features
                 except KeyError as e:
                     print(f'Discarding product {product_url} missing required features: {e}')
                     return None
-            return features
+            else:
+                return features
+
         except Exception as e:
-            raise Exception(f"error while scraping {product_url}: {e}")
+            raise Exception(f"Error while scraping {product_url}: {e}")
 
 
 class Scraper():

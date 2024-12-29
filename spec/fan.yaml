@@ -3,7 +3,9 @@ features:
   - price
   - manufacturer
   - name
-  - loudness
-  - width
-  - features
+  - fan:
+    - width
+    - loudness
+  - other:
+    - features
   - link

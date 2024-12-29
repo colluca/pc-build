@@ -3,9 +3,10 @@ features:
   - price
   - manufacturer
   - name
-  - number of modules
-  - module size
-  - type
-  - frequency
-  - CL
+  - technical data:
+    - number of modules
+    - module size
+    - type
+    - frequency
+    - CL
   - link
