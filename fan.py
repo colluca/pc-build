@@ -24,7 +24,7 @@ def extract_loudness(loudness_str):
     if match:
         return float(match.group(1))
     else:
-        return 1
+        raise ValueError(f"Loudness string '{loudness_str}' does not match the required format.")
 
 
 fan_df = pd.read_csv('data/fan.csv')
@@ -33,7 +33,6 @@ fan_df = pd.read_csv('data/fan.csv')
 fan_df = filter_dataframe(fan_df, fan_df['loudness'].notna(), 'loudness present')
 
 # Parse feature values
-# TODO why is width feature missing for fans which do have it on website?
 fan_df['number of fans'] = fan_df['features'].apply(extract_num_fans)
 fan_df['loudness'] = fan_df['loudness'].apply(extract_loudness)
 fan_df['price per fan'] = fan_df['price'] / fan_df['number of fans']

@@ -23,7 +23,7 @@ case_df = filter_dataframe(case_df, case_df['internal 3.5"'] != '-', 'number of 
 # Parse feature values
 case_df['internal 3.5"'] = case_df['internal 3.5"'].apply(extract_num_drives)
 
-# Filter form factor and number of drives
+# Apply filters
 case_df = filter_dataframe(case_df, (case_df['max. form factor'] == 'E-ATX') | (case_df['max. form factor'] == 'ATX'), 'minimum motherboard size')
 case_df = filter_dataframe(case_df, case_df['internal 3.5"'] >= 4, 'minimum number of 3.5" drives')
 case_df = filter_dataframe(case_df, case_df['type'] == 'tower case', 'case type')
