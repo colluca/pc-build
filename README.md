@@ -1,3 +1,9 @@
+# Purpose
+
+Automate search and selection of parts for a PC build in Switzerland.
+
+This repo provides scripts to scrape PC parts from Toppreise and automate the selection of parts based on user-provided filtering criteria and objectives.
+
 # Usage
 
 Scrape products from Toppreise:
