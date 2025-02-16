@@ -58,7 +58,7 @@ def extract_latency_scalar(cl_str):
         raise ValueError(f"CL string '{cl_str}' does not match the required format.")
 
 
-ram_df = pd.read_csv('data/ram.csv')
+ram_df = pd.read_csv('data/complete/ram.csv')
 
 # Clean missing entries
 ram_df = ram_df.dropna()
@@ -86,5 +86,8 @@ ram_df = ram_df[ram_pareto_mask]
 # Filter number of modules
 ram_df = ram_df[ram_df['number of modules'] == 2]
 
+# Sort by price per GB
+ram_df.sort_values('price per GB', ascending=True, inplace=True)
+
 # Export
-ram_df.to_csv('data/ram_pareto.csv', index=False)
+ram_df.to_csv('data/filtered/ram.csv', index=False)

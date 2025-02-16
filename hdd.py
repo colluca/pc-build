@@ -32,7 +32,7 @@ def extract_rotations_scalar(rotations_str):
         raise ValueError(f"Rotations '{rotations_str}' does not match the required format.")
 
 
-hdd_df = pd.read_csv('data/hdd.csv')
+hdd_df = pd.read_csv('data/complete/hdd.csv')
 
 # Clean missing entries
 hdd_df = hdd_df.dropna()
@@ -43,10 +43,12 @@ hdd_df['total capacity'] = hdd_df['total capacity'].apply(extract_capacity_scala
 hdd_df['rotations'] = hdd_df['rotations'].apply(extract_rotations_scalar)
 hdd_df['price per TB'] = hdd_df['price'] / hdd_df['total capacity']
 
-# Filter DDR and DIMM standards
-# hdd_df = hdd_df[(hdd_df['ddr'] == 'DDR4') | (hdd_df['ddr'] == 'DDR5')]
-# hdd_df = hdd_df[(hdd_df['dimm'] == 'DIMM') | (hdd_df['dimm'] == 'UDIMM')]
-
 hdd_objectives_df = hdd_df[hdd_objectives]
 hdd_pareto_mask = paretoset(hdd_df[hdd_objectives], sense=hdd_objectives_sense)
-hdd_df[hdd_pareto_mask].to_csv('data/hdd_pareto.csv', index=False)
+hdd_df = hdd_df[hdd_pareto_mask]
+
+# Sort by price per TB
+hdd_df.sort_values('price per TB', ascending=True, inplace=True)
+
+# Export to CSV
+hdd_df.to_csv('data/filtered/hdd.csv', index=False)

@@ -7,8 +7,8 @@ cpu_core_count_regex = r'^(\d+)x$'
 cpu_clock_rate_regex = r'^(\d+(\.\d+)?)GHz$'
 cpu_cache_size_regex = r'^(\d+)x\s*(\d+(\.\d+)?)(MB|kB)$'
 
-cpu_objectives = ['price', 'performance', 'L2 cache', 'L3 cache']
-cpu_objectives_sense = ['min', 'max', 'max', 'max']
+cpu_objectives = ['price', 'CPU cores', 'performance', 'L2 cache', 'L3 cache', 'manufacturer']
+cpu_objectives_sense = ['min', 'diff', 'max', 'max', 'max', 'diff']
 
 
 def extract_core_count_scalar(core_count_str):
@@ -43,17 +43,29 @@ def extract_total_cache_size(cache_size_str):
     else:
         raise ValueError(f"CPU cache size '{cache_size_str}' does not match the required format.")
 
+# Read raw data
+cpu_df = pd.read_csv('data/complete/cpu.csv')
 
-cpu_df = pd.read_csv('data/cpu.csv')
-
-cpu_core_count_scalar = cpu_df['CPU cores'].apply(extract_core_count_scalar)
-cpu_clock_rate_scalar = cpu_df['clock rate'].apply(extract_clock_rate_scalar)
-cpu_df['performance'] = cpu_core_count_scalar * cpu_clock_rate_scalar
+# Parse data
+cpu_df['CPU cores'] = cpu_df['CPU cores'].apply(extract_core_count_scalar)
+cpu_df['clock rate'] = cpu_df['clock rate'].apply(extract_clock_rate_scalar)
+cpu_df['performance'] = cpu_df['CPU cores'] * cpu_df['clock rate']
 cpu_df['L2 cache'] = cpu_df['L2 cache'].apply(extract_total_cache_size)
 cpu_df['L3 cache'] = cpu_df['L3 cache'].apply(extract_total_cache_size)
 cpu_df['performance per dollar [MOPS/$]'] = 1000 * cpu_df['performance'] / cpu_df['price']
 cpu_df['L3 per dollar [KB/$]'] = cpu_df['L3 cache'] / cpu_df['price']
 
-cpu_objectives_df = cpu_df[cpu_objectives]
-cpu_pareto_mask = paretoset(cpu_df[cpu_objectives], sense=cpu_objectives_sense)
-cpu_df[cpu_pareto_mask].to_csv('data/cpu_pareto.csv', index=False)
+# Apply filters
+cpu_df = cpu_df[cpu_df['manufacturer'] == 'AMD']
+cpu_df = cpu_df[cpu_df['CPU cores'] >= 8]
+cpu_df = cpu_df[cpu_df['clock rate'] >= 4]
+
+# # Get Pareto set
+# cpu_objectives_df = cpu_df[cpu_objectives]
+# cpu_pareto_mask = paretoset(cpu_df[cpu_objectives], sense=cpu_objectives_sense)
+# cpu_df = cpu_df[cpu_pareto_mask]
+
+# Sort by performance per dollar
+cpu_df.sort_values('performance per dollar [MOPS/$]', ascending=False, inplace=True)
+
+cpu_df.to_csv('data/filtered/cpu.csv', index=False)

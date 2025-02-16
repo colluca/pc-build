@@ -38,7 +38,7 @@ def extract_speed_scalar(speed_str):
         raise ValueError(f"Speed '{speed_str}' does not match the required format.")
 
 
-ssd_df = pd.read_csv('data/ssd.csv')
+ssd_df = pd.read_csv('data/complete/ssd.csv')
 
 # Clean missing entries
 ssd_df = ssd_df.dropna()
@@ -58,5 +58,8 @@ ssd_objectives_df = ssd_df[ssd_objectives]
 ssd_pareto_mask = paretoset(ssd_df[ssd_objectives], sense=ssd_objectives_sense)
 ssd_df = ssd_df[ssd_pareto_mask]
 
+# Sort by price per TB
+ssd_df.sort_values('price per TB', ascending=True, inplace=True)
+
 # Export
-ssd_df.to_csv('data/ssd_pareto.csv', index=False)
+ssd_df.to_csv('data/filtered/ssd.csv', index=False)

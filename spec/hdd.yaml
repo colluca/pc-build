@@ -5,6 +5,7 @@ features:
   - name
   - general information:
     - total capacity
+    - cache
     - rotations
   - connectors:
     - Serial ATA

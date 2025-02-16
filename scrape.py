@@ -3,15 +3,16 @@ from pathlib import Path
 from toppreise import Scraper
 
 SPECS_DIR = Path('spec')
-DATA_DIR = Path('data')
+DATA_DIR = Path('data/complete')
 
 
 def main():
     for spec in SPECS_DIR.iterdir():
-        if spec.stem:
-            scraper = Scraper.from_yaml(spec)
-            scraper.scrape()
-            scraper.to_csv(DATA_DIR / f'{spec.stem}.csv')
+        print(f'=== {spec.stem} ===')
+        scraper = Scraper.from_yaml(spec)
+        scraper.scrape(max_products=400)
+        DATA_DIR.mkdir(exist_ok=True, parents=True)
+        scraper.to_csv(DATA_DIR / f'{spec.stem}.csv')
 
 
 if __name__ == "__main__":

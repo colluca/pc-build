@@ -27,7 +27,7 @@ def extract_noise_level(noise_level_str):
         raise ValueError(f"Noise level string '{noise_level_str}' does not match the required format.")
 
 
-psu_df = pd.read_csv('data/psu.csv')
+psu_df = pd.read_csv('data/complete/psu.csv')
 
 # Clean incomplete entries
 psu_df = filter_dataframe(psu_df, psu_df['max noise level'].notna() & (psu_df['max noise level'] != '-'), 'max noise level present')
@@ -35,6 +35,7 @@ psu_df = filter_dataframe(psu_df, psu_df['max noise level'].notna() & (psu_df['m
 # Parse feature values
 psu_df['power'] = psu_df['power'].apply(extract_power)
 psu_df['max noise level'] = psu_df['max noise level'].apply(extract_noise_level)
+psu_df['price per W'] = psu_df['price'] / psu_df['power']
 
 # Find Pareto front
 psu_objectives_df = psu_df[psu_objectives]
@@ -45,5 +46,8 @@ psu_df = filter_dataframe(psu_df, psu_pareto_mask, 'Pareto front')
 psu_df = filter_dataframe(psu_df, psu_df['color'] == 'black', 'black color')
 psu_df = filter_dataframe(psu_df, psu_df['form factor'] == 'ATX', 'ATX form factor')
 
+# Sort by price per W
+psu_df.sort_values('price per W', ascending=True, inplace=True)
+
 # Export
-psu_df.to_csv('data/psu_pareto.csv', index=False)
+psu_df.to_csv('data/filtered/psu.csv', index=False)

@@ -13,8 +13,14 @@ ungrouped_variants_query = '1299760721062_fi_pcds_v=0'
 def scrape_website(url):
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
-        page = browser.new_page()
+        context = browser.new_context(user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36")
+        page = context.new_page()
         page.goto(url, timeout=60000)
+        # try:
+        #     page.wait_for_selector("button.fc-button.fc-cta-consent.fc-primary-button", timeout=5000)
+        #     page.click("button.fc-button.fc-cta-consent.fc-primary-button")
+        # except Exception as e:
+        #     print("Cookie popup not found or already dismissed.")
         html_content = page.content()
         browser.close()
         return html_content
@@ -46,13 +52,13 @@ def get_product_features(product_url, filter=None):
         print(f'Discarding product {product_url} at unsupported URL')
         return None
     else:
-        html = scrape_website(product_url)
         try:
             # Parse product page HTML
+            html = scrape_website(product_url)
             soup = BeautifulSoup(html, "html.parser")
 
             # Get generic product features (price, manufacturer, name)
-            price = float(soup.find('div', class_="Plugin_Price").text.strip().replace("'", ""))
+            price = float(soup.find('div', attrs={'class': "Plugin_Price"}).text.strip().replace("'", ""))
             manufacturer = soup.find('span', class_="manu").text.strip()
             title = soup.find('span', class_="title break")
             if title is None:
@@ -103,7 +109,7 @@ def get_product_features(product_url, filter=None):
                 return features
 
         except Exception as e:
-            raise Exception(f"Error while scraping {product_url}: {e}")
+            print(f"Error while scraping {product_url}: {e}")
 
 
 class Scraper():
@@ -175,3 +181,6 @@ if __name__ == "__main__":
     scraper = Scraper(args.url, args.features)
     scraper.scrape(args.max_products)
     scraper.to_csv(args.output)
+    # # To just scrape a product page
+    # scraper = Scraper.from_yaml('spec/case.yaml')
+    # get_product_features(args.url, scraper.features)
